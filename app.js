@@ -1,27 +1,11 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
-const mongoose = require('mongoose')
 const URL = require('./models/URL')
 const shortenURL = require('./utils/shortenURL')
 
-// 非正式環境使用 dotenv
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
-
 const app = express()
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }) // 連線到mongoDB
-
-const db = mongoose.connection
-
-db.on('error', () => {
-  console.log('mongodb error!')
-})
-
-db.once('open', () => {
-  console.log('mongodb connected!')
-})
+require('./config/mongoose')
 
 app.engine('hbs', exphbs({defaultLayout: 'main', extname: '.hbs'}))
 app.set('view engine', 'hbs')
