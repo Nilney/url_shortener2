@@ -1,0 +1,30 @@
+<div class="container mt-5">
+  <div class="d-flex justify-content-center">
+    {{#if shortURL}}
+      <div class="d-flex flex-column align-items-center col-8">
+        <h3>Success! Please use this link:</h3>
+        <h4 id="shortURL" style="color: #136BC3">{{origin}}/{{shortURL}}</h4>
+        <div class="mt-3">
+          <button type="button" onclick="copy()" class="btn btn-success me-2">Copy!</button> <!-- 運用onclick呼叫copy函示 -->
+          <a href="/"><button class="btn btn-outline-success ms-2">Home</button></a>
+        </div>
+      </div>
+
+      <!-- copy function -->
+      <script>
+        function copy() {
+          const copiedURL = document.getElementById('shortURL')
+          navigator.clipboard.writeText(copiedURL.innerText)
+            .then(() => alert('copied!'))
+            .catch(err => console.error(err))
+        }
+      </script>
+
+    {{else}}
+      <form action="/" method="POST" class="d-flex flex-column align-items-center col-8">
+        <input type="url" name="url" class="form-control" id="url" placeholder="Input URL here..." required>
+        <button type="submit" class="btn btn-outline-primary mt-3">Shorten</button>
+      </form>
+    {{/if}}
+  </div>
+</div>
