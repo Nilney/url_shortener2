@@ -1,6 +1,7 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const URL = require('./models/URL')
+const isUrlValid =require('./utils/isUrlValid')
 const shortenURL = require('./utils/shortenURL')
 
 const app = express()
@@ -16,23 +17,35 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
   if (!req.body.url) return res.redirect('/')
 
   const originalURL = req.body.url
-  const shortURL = shortenURL(5)
+  
+  isUrlValid(originalURL)
+    .then(() => {
+      const shortURL = shortenURL(5)
+    
+      URL.findOne({ originalURL })
+      .then((data) => {
+        // 確認有無資料，若有就直接取用現有網址，若無則在資料庫建立新資料
+        if (data) {
+          res.render('index', { origin: req.headers.origin, shortURL: data.shortURL })
+        } else {
+          URL.create({ originalURL, shortURL })
+            .then(() => {
+              res.render('index', { origin: req.headers.origin, shortURL })
+            })
+            .catch(err => console.error(err))
+        }
+      })
+      .catch(err => console.error(err))
 
-  URL.findOne({ originalURL })
-    .then((data) => {
-      // 確認有無資料，若有就直接取用現有網址，若無則在資料庫建立新資料
-      if (data) {
-        res.render('index', { origin: req.headers.origin, shortURL: data.shortURL })
-      } else {
-        URL.create({ originalURL, shortURL })
-        res.render('index', { origin: req.headers.origin, shortURL })
-      }
     })
-    .catch(err => console.error(err))
+  .catch(err => {
+    res.render('error')
+  })
+  
 })
 
 app.get('/:shortURL', (req, res) => {
@@ -42,7 +55,7 @@ app.get('/:shortURL', (req, res) => {
       if (data) {
         res.redirect(data.originalURL)
       } else {
-        res.render('error')
+        res.render('error', { shortURL })
       }
     })
     .catch(err => console.error(err))

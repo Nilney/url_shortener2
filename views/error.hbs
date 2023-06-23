@@ -1,9 +1,15 @@
 <div class="container mt-5">
   <div class="d-flex justify-content-center">
     <div class="d-flex flex-column align-items-center col-8">
-      <h3>Opps! The short URL is not exist.</h3>
-      <h4>Made one for your self</h4>
-      <a href="/"><button class="btn btn-success mt-3">Go for it!</button></a>
+      {{#if shortURL}} <!-- 短網址無效 -->
+        <h3>Opps! The short URL is not exist.</h3>
+        <h4>Made one for your self</h4>
+        <a href="/"><button class="btn btn-success mt-3">Go for it!</button></a>
+      {{else}} <!-- 使用者所填網址無效 -->
+        <h3>Opps! The original URL is not valid.</h3>
+        <h4>Please try another one</h4>
+        <a href="/"><button class="btn btn-success mt-3">Go for it!</button></a>
+      {{/if}}
     </div>
   </div>
 </div>
