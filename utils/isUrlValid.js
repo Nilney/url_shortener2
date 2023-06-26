@@ -19,7 +19,7 @@ function isUrlValid(inputURL) {
 
           // 請求檢查 URL 可用性
           protocol.get(url, (res) => {
-            if (res.statusCode === 200) {
+            if (res.statusCode >= 200 && res.statusCode < 300 || res.statusCode === 301 || res.statusCode === 302) {
               resolve()
             } else {
               console.log('Invalid status code:', res.statusCode)
